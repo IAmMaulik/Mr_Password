@@ -7,7 +7,11 @@ let PORT;
 
 const app = express();
 
+// SETTING FOR THE MODULES USED
+app.use(express.static("public"));
 app.set("view engine", "ejs");
+
+// GET AND POST ROUTES
 app.get("/", (req, res) => {
   res.render("home");
 });
@@ -18,7 +22,6 @@ if (process.env.PORT) {
 } else {
   PORT = 3000;
 }
-
 app.listen(PORT, () => {
   console.log("Server running on port 3000 or previously defined port");
 });
