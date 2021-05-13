@@ -14,4 +14,7 @@ body {
   color: #fff;
   background-color: #000;
 }
-  
+
+.new-or-old-user{
+  margin: 1rem;
+}
