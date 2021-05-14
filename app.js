@@ -2,12 +2,21 @@
 require('dotenv').config()
 const express = require("express");
 const bodyParser = require("body-parser");
+const db = require("./db")
+const app = express();
+
+// Mongoose code
+const connectedToDb = () => {
+  console.log("Connected to database");
+}
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', connectedToDb)
+
 
 // OTHER GLOBAL CONSTANTS/VARIABLES
 let PORT;
 let userLoggedIn = false;
-
-const app = express();
 
 // SETTING FOR THE MODULES USED
 app.use(express.static("public"));
