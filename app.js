@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./db");
+const { user } = require("./db");
 const app = express();
 
 let users = [];
@@ -33,16 +34,40 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
+app.post("/login", (req, res) => {
+  let username = req.body.username;
+  let password = req.body.password;
+  let flag = false;
+  users.forEach((user) => {
+    if (user.username === username && user.password === password) {
+      console.log(
+        `User with username: ${username} and password: ${password} exists and is now logged in`
+      );
+      res.render("user", {
+        username: username,
+      });
+      flag = true;
+    }
+  });
+  if (flag === false) {
+    res.redirect("/register");
+  }
+});
+
 app.get("/register", (req, res) => {
   res.render("register");
 });
 
 app.post("/register", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
   users.push({
-    username: req.body.username,
-    password: req.body.password,
+    username: username,
+    password: password,
   });
-  console.log(users);
+  res.render("user", {
+    username: username,
+  });
 });
 
 // STARTING THE SERVER ON THE APPROPRIATE PORT
