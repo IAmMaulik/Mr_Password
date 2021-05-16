@@ -39,7 +39,7 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  User.find(
+  User.findOne(
     {
       username: username,
       password: password,
@@ -47,8 +47,10 @@ app.post("/login", (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
-      } else {
+      } else if (result !== null) {
         res.render("user", { username: username });
+      } else {
+        res.redirect("/register");
       }
     }
   );
