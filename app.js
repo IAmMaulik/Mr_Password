@@ -38,22 +38,30 @@ app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  // bcrypt.compare(password, hash, function (err, result) {
-  //   // result == true
-  // });
-
-  User.findOne(
+  User.find(
     {
       username: username,
-      password: password,
     },
-    (err, result) => {
+    (err, results) => {
       if (err) {
         console.log(err);
-      } else if (result !== null) {
-        res.render("user", { username: username });
-      } else {
+      } else if (results === []) {
         res.redirect("/register");
+      } else {
+        results.forEach((result) => {
+          bcrypt.compare(
+            password,
+            result.password,
+            (errorInBcrypt, answer) => {
+              if (errorInBcrypt) {
+                console.log(errorInBcrypt);
+              }
+              if (answer === true) {
+                res.render("user", { username: username });
+              }
+            }
+          );
+        });
       }
     }
   );
