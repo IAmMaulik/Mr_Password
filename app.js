@@ -3,17 +3,18 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./db");
+const User = require("./models/userModel");
 const { user } = require("./db");
 const app = express();
 
 let users = [];
 // Mongoose code
-// const connectedToDb = () => {
-//   console.log("Connected to database");
-// }
+const connectedToDb = () => {
+  console.log("Connected to database");
+};
 
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', connectedToDb)
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", connectedToDb);
 
 // OTHER GLOBAL CONSTANTS/VARIABLES
 let PORT;
@@ -35,23 +36,22 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let username = req.body.username;
-  let password = req.body.password;
-  let flag = false;
-  users.forEach((user) => {
-    if (user.username === username && user.password === password) {
-      console.log(
-        `User with username: ${username} and password: ${password} exists and is now logged in`
-      );
-      res.render("user", {
-        username: username,
-      });
-      flag = true;
+  const username = req.body.username;
+  const password = req.body.password;
+
+  User.find(
+    {
+      username: username,
+      password: password,
+    },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render("user", { username: username });
+      }
     }
-  });
-  if (flag === false) {
-    res.redirect("/register");
-  }
+  );
 });
 
 app.get("/register", (req, res) => {
@@ -61,12 +61,17 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  users.push({
+  let new_user = new User({
     username: username,
     password: password,
   });
-  res.render("user", {
-    username: username,
+
+  new_user.save((err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("user", { username: username });
+    }
   });
 });
 
