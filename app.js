@@ -4,10 +4,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./db");
 const User = require("./models/userModel");
-const { user } = require("./db");
 const app = express();
+const bcrypt = require("bcrypt");
 
-let users = [];
 // Mongoose code
 const connectedToDb = () => {
   console.log("Connected to database");
@@ -18,7 +17,7 @@ db.once("open", connectedToDb);
 
 // OTHER GLOBAL CONSTANTS/VARIABLES
 let PORT;
-let userLoggedIn = false;
+let saltRounds = 12;
 
 // SETTING FOR THE MODULES USED
 
@@ -38,6 +37,10 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
+
+  // bcrypt.compare(password, hash, function (err, result) {
+  //   // result == true
+  // });
 
   User.findOne(
     {
@@ -61,18 +64,24 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  let new_user = new User({
-    username: username,
-    password: password,
-  });
-
-  new_user.save((err, result) => {
+  let username = req.body.username;
+  let password = req.body.password;
+  bcrypt.hash(password, saltRounds, function (err, hash) {
     if (err) {
       console.log(err);
     } else {
-      res.render("user", { username: username });
+      let new_user = new User({
+        username: username,
+        password: hash,
+      });
+
+      new_user.save((errInSaving, result) => {
+        if (errInSaving) {
+          console.log(errInSaving);
+        } else {
+          res.render("user", { username: username });
+        }
+      });
     }
   });
 });
