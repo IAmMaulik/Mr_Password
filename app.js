@@ -44,23 +44,20 @@ app.post("/login", (req, res) => {
     },
     (err, results) => {
       if (err) {
-        console.log(err);
-      } else if (results === []) {
+        console.log(`Error in finding in DB: ${err}`);
+      } else if (results === [] || !results) {
         res.redirect("/register");
       } else {
         results.forEach((result) => {
-          bcrypt.compare(
-            password,
-            result.password,
-            (errorInBcrypt, answer) => {
-              if (errorInBcrypt) {
-                console.log(errorInBcrypt);
-              }
-              if (answer === true) {
-                res.render("user", { username: username });
-              }
+          bcrypt.compare(password, result.password, (errorInBcrypt, answer) => {
+            if (errorInBcrypt) {
+              console.log(`Error in Bcrypt: ${errorInBcrypt}`);
+            } else if (answer) {
+              res.render("user", { username: username });
+            } else {
+              res.redirect("/register");
             }
-          );
+          });
         });
       }
     }
