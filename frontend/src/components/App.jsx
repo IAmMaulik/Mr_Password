@@ -1,24 +1,22 @@
-import '../css/App.css';
+import React, { useState } from "react";
+import axios from "axios";
+import "../css/App.css";
 
-function App() {
+const App = () => {
+  const getData = () => {
+    axios
+      .get("http://localhost:4000", { crossdomain: true })
+      .then((response) => setText(response.data));
+  };
+
+  const [text, setText] = useState("");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <h1>{text}</h1>
+      <button onClick={getData}>Click Me</button>
     </div>
   );
-}
+};
 
 export default App;
