@@ -1,7 +1,8 @@
 const express = require("express");
-
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -13,7 +14,12 @@ app.use(function (req, res, next) {
 
 app.get("/", (req, res) => {
   res.send("This is taken from the backend");
+  console.log("Data sent to frontend");
 });
+
+app.post("/getPost", (req, res) => {
+  console.log(req.body.title);
+})
 
 let PORT;
 if (process.env.PORT) {
