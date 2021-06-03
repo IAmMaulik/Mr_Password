@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import "../css/App.css";
-import Login from "./Login";
-import Register from "./Register";
-import Home from "./Home";
-import NotFound404 from "./NotFound404";
+import "./css/App.css";
+import Login from "./routes/Login";
+import Register from "./routes/Register";
+import Home from "./routes/Home";
+import NotFound404 from "./routes/NotFound404";
 
 const App = () => {
   return (
